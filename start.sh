@@ -5,19 +5,16 @@ SERVER=server.js
 CONSOLE=mineos_console.js
 CONFIGFILE=/usr/games/minecraft/mineos.conf
 DATAPATH=/var/games/minecraft
-USER=minecraft
-GROUP=minecraft
 
 # Create dooes not exists directories
-chown $USER:$GROUP $DATAPATH
 if [ ! -d $DATAPATH/ssl_certs ]; then
-    sudo -u $USER mkdir $DATAPATH/ssl_certs
+    mkdir $DATAPATH/ssl_certs
 fi
 if [ ! -d $DATAPATH/log ]; then
-    sudo -u $USER mkdir $DATAPATH/log
+    mkdir $DATAPATH/log
 fi
 if [ ! -d $DATAPATH/run ]; then
-    sudo -u $USER mkdir $DATAPATH/run
+    mkdir $DATAPATH/run
 fi
 
 # Changing password
@@ -26,8 +23,8 @@ if [ ! -f $SCRIPTPATH/.initialized ]; then
         PASSWORD=`pwgen 10 1`
         echo "Login password is \"$PASSWORD\""
     fi
-    echo "$USER:$PASSWORD" | chpasswd
-    sudo -u $USER touch $SCRIPTPATH/.initialized
+    echo "root:$PASSWORD" | chpasswd
+    touch $SCRIPTPATH/.initialized
 fi
 
 # Generate ssl certrificates
@@ -37,8 +34,8 @@ if [ ! -f "$CERT_DIR/mineos.pem" ]; then
 fi
 
 # Starting minecraft servers
-sudo -u $USER node $SCRIPTPATH/$CONSOLE -d $DATAPATH restore
-sudo -u $USER node $SCRIPTPATH/$CONSOLE -d $DATAPATH start
+node $SCRIPTPATH/$CONSOLE -d $DATAPATH restore
+node $SCRIPTPATH/$CONSOLE -d $DATAPATH start
 
 # Trap function
 _trap() {
@@ -51,7 +48,7 @@ _trap() {
         sleep 1
     done
 
-    sudo -u $USER node $SCRIPTPATH/$CONSOLE -d $DATAPATH stop
+    node $SCRIPTPATH/$CONSOLE -d $DATAPATH stop
 }
 trap '_trap' 15
 
