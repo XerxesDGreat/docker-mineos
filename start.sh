@@ -1,8 +1,8 @@
 #!/bin/sh
 
 SCRIPTPATH=/usr/games/minecraft
-SERVER=server.py
-CONSOLE=mineos_console.py
+SERVER=server.js
+CONSOLE=mineos_console.js
 CONFIGFILE=/usr/games/minecraft/mineos.conf
 DATAPATH=/var/games/minecraft
 USER=minecraft
@@ -37,8 +37,8 @@ if [ ! -f "$CERT_DIR/mineos.pem" ]; then
 fi
 
 # Starting minecraft servers
-sudo -u $USER python $SCRIPTPATH/$CONSOLE -d $DATAPATH restore
-sudo -u $USER python $SCRIPTPATH/$CONSOLE -d $DATAPATH start
+sudo -u $USER node $SCRIPTPATH/$CONSOLE -d $DATAPATH restore
+sudo -u $USER node $SCRIPTPATH/$CONSOLE -d $DATAPATH start
 
 # Trap function
 _trap() {
@@ -51,7 +51,7 @@ _trap() {
         sleep 1
     done
 
-    sudo -u $USER python $SCRIPTPATH/$CONSOLE -d $DATAPATH stop
+    sudo -u $USER node $SCRIPTPATH/$CONSOLE -d $DATAPATH stop
 }
 trap '_trap' 15
 

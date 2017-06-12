@@ -1,17 +1,21 @@
-FROM ubuntu:xenial
+FROM openjdk:8
 MAINTAINER Yuji ODA
 
 # Installing Dependencies
-RUN apt-get update; \
-    apt-get -y install supervisor screen python-cherrypy3 rdiff-backup git openjdk-8-jre; \
-    apt-get -y install openssh-server uuid pwgen
+RUN apt-get update && \
+    apt-get install -y curl && \
+    curl -sL https://deb.nodesource.com/setup_4.x | bash - && \
+    apt-get -y install nodejs && \
+    apt-get -y install supervisor rdiff-backup screen git build-essential ca-certificates-java
 
 # Installing MineOS scripts
 RUN mkdir -p /usr/games /var/games/minecraft; \
-    git clone git://github.com/hexparrot/mineos /usr/games/minecraft; \
+    git clone git://github.com/hexparrot/mineos-node.git /usr/games/minecraft; \
     cd /usr/games/minecraft; \
-    chmod +x server.py mineos_console.py generate-sslcert.sh; \
-    ln -s /usr/games/minecraft/mineos_console.py /usr/local/bin/mineos
+    git config core.filemode false; \
+    chmod +x service.js mineos_console.js generate-sslcert.sh webui.js; \
+    npm install; \
+    ln -s /usr/games/minecraft/mineos_console.js /usr/local/bin/mineos
 
 # Customize server settings
 RUN sed -i 's/^\(\[supervisord\]\)$/\1\nnodaemon=true/' /etc/supervisor/supervisord.conf
